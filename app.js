@@ -1,18 +1,11 @@
-const tg = window.Telegram.WebApp;
-tg.expand();
+// Начальный счёт кристаллов
+let crystals = 0;
 
-document.getElementById("spin").onclick = () => {
-    const items = ["Blue", "Purple", "Pink", "Red", "Gold"];
-    const weights = [79.9, 16, 3.2, 0.6, 0.2];
+// Получаем элемент для отображения счёта
+const crystalsCount = document.getElementById('crystalsCount');
 
-    let rnd = Math.random() * 100;
-    let sum = 0;
-
-    for (let i = 0; i < items.length; i++) {
-        sum += weights[i];
-        if (rnd <= sum) {
-            document.getElementById("result").innerText = Выпало: ${items[i]};
-            break;
-        }
-    }
-};
+// Пример: увеличение кристаллов каждые 2 секунды
+setInterval(() => {
+    crystals += 10; // добавляем 10 кристаллов
+    crystalsCount.textContent = `Кристаллы: ${crystals}`;
+}, 2000);
