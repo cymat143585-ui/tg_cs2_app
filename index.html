@@ -4,65 +4,62 @@
 <meta charset="UTF-8">
 <style>
     body {
-        background-color: #000000;
-        color: #ffffff;
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        flex-direction: column;
+        background-color: #000;
+        color: #fff;
+        font-family: Arial;
+        text-align: center;
     }
-
-    .crystals-count {
-        font-size: 2em;
-        margin-bottom: 20px;
+    #status {
+        margin-top: 20px;
+        font-size: 1.4em;
     }
-
-    h1 {
-        font-size: 3em;
-        margin: 0;
-    }
-
-    /* Рамка для заданий */
-    .tasks-box {
-        margin-top: 40px;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 20px;
-        border-radius: 15px;
-        width: 300px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .tasks-box p {
-        margin: 10px 0;
+    button {
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: none;
+        background: #4caf50;
+        color: #fff;
         font-size: 1.2em;
-        padding-bottom: 10px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.25); /* линия */
-    }
-
-    /* убрать линию у последнего задания */
-    .tasks-box p:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
+        cursor: pointer;
     }
 </style>
 </head>
+
 <body>
-
-    <div class="crystals-count">0 crystals</div>
-
     <h1>Mcrystals</h1>
 
     <div class="tasks-box">
-        <p>Задание 1: Подписаться на телеграмм канал</p>
-        <p>Задание 2: Пополните кристаллы</p>
-        <p>Задание 3: Заберите бонус</p>
+        <p>Задание: Подпишись на канал</p>
+        <button onclick="checkSub()">Проверить подписку</button>
     </div>
 
-    <script src="app.js"></script>
+    <div id="status"></div>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+    const tg = window.Telegram.WebApp;
+    const userId = tg.initDataUnsafe.user.id; // 🔥 получаем ID пользователя
+
+    function checkSub() {
+        fetch("https://your-server.com/check_sub", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId })
+        })
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("status");
+
+            if (data.subscribed === true) {
+                box.innerHTML = `✔ Вы подписались!<br>💎 +${data.reward} гемов`;
+                box.style.color = "#4caf50";
+            } else {
+                box.innerHTML = "❌ Вы не подписаны на канал";
+                box.style.color = "red";
+            }
+        });
+    }
+</script>
+
 </body>
 </html>
-
