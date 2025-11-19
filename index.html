@@ -22,7 +22,7 @@ h1 { font-size:3em; margin-bottom:40px; }
 
 <div class="tasks-box" id="task1">
     <p>Задание 1: Подпишись на канал</p>
-    <a href="https://t.me/your_channel" target="_blank" onclick="startCheckSub()">
+    <a href="https://t.me/skin_master_gdd" target="_blank" onclick="startCheckSub()">
         <button>Перейти в Telegram</button>
     </a>
 </div>
@@ -67,7 +67,7 @@ function closeModal() {
 
 async function checkSub() {
     try {
-        const response = await fetch("http://localhost:5000/check_sub", {
+        const response = await fetch("http://192.168.1.6:5000", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user_id: userId })
@@ -95,6 +95,7 @@ function startCheckSub() {
 
 </body>
 </html>
+
 
 
 
