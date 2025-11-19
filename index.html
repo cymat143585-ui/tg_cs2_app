@@ -86,7 +86,7 @@ async function checkSub() {
     }
 
     try {
-        const response = await fetch("http://localhost:5000/check_sub", { // адрес вашего Flask сервера
+        const response = await fetch("http://192.168.1.6:5000", { // адрес вашего Flask сервера
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user_id: userId })
@@ -109,6 +109,7 @@ async function checkSub() {
 
 </body>
 </html>
+
 
 
 
