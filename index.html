@@ -84,6 +84,7 @@
 <div class="tasks-box" id="task1">
     <p>Задание 1: Подпишись на канал</p>
     <button id="subscribeBtn" onclick="subscribe()">Подписаться</button>
+    <button id="copyBtn" onclick="copyLink()" style="display:none;">Скопировать ссылку</button>
     <button id="checkBtn" onclick="checkSub()" style="display:none;">Проверить подписку</button>
 </div>
 
@@ -109,25 +110,35 @@
 <script>
     const tg = window.Telegram?.WebApp;
     const userId = tg?.initDataUnsafe?.user?.id || 0;
+    const channelUrl = "https://t.me/your_channel"; // Замените на ваш канал
 
     function subscribe() {
-        const channelUrl = "https://t.me/your_channel"; // Замените на ваш канал
+        let opened = false;
 
         if (tg?.initDataUnsafe) {
-            // Telegram Web App
             try {
                 tg.openLink(channelUrl);
+                opened = true;
             } catch {
-                // fallback для Web App
-                window.location.href = channelUrl;
+                opened = false;
             }
-        } else {
-            // Обычный браузер
-            window.open(channelUrl, "_blank");
         }
 
+        // Если не удалось открыть автоматически (Android WebApp), показать кнопку "Скопировать ссылку"
+        if (!opened) {
+            document.getElementById("copyBtn").style.display = "inline-block";
+            alert("Откройте Telegram и перейдите по ссылке:\n" + channelUrl);
+        }
+
+        // Скрываем кнопку "Подписаться", показываем "Проверить подписку"
         document.getElementById("subscribeBtn").style.display = "none";
         document.getElementById("checkBtn").style.display = "inline-block";
+    }
+
+    function copyLink() {
+        navigator.clipboard.writeText(channelUrl).then(() => {
+            alert("Ссылка на канал скопирована! Откройте Telegram и подпишитесь.");
+        });
     }
 
     function checkSub() {
@@ -162,6 +173,7 @@
 
 </body>
 </html>
+
 
 
 
