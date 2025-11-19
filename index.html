@@ -1,62 +1,58 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Mcrystals</title>
-    <div class="crystals-count" id="crystalsCount">Кристаллы: 0</div>
+<meta charset="UTF-8">
+<style>
+    body {
+        background-color: #000000;
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center; 
+        align-items: center;
+        height: 100vh;
+        flex-direction: column; /* ставим элементы вертикально */
+    }
 
-    <style>
-        /* Черный фон для всего документа */
-        body {
-            background-color: #000000;
-            color: #ffffff;  /* белый текст */
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;  /* по центру горизонтально */
-            align-items: center;      /* по центру вертикально */
-            height: 100vh;            /* высота на весь экран */
-        }
-        .crystals-count {
-            font-size: 2em;
-            margin-bottom: 20px; /* отступ над Mcrystals */
-        }
-        /* Стили для текста */
-        h1 {
-            font-size: 3em;
-            transform: translateY(-200px);
-        }
-        .tasks {
-            position: absolute;
-            justify-content: center;
-            text-align: center;
-            width: 100%;
-        }
+    /* блок с кристаллами */
+    .crystals-count {
+        font-size: 2em;
+        margin-bottom: 20px; /* расстояние перед Mcrystals */
+    }
 
-        .tasks p {
-            margin: 5px 0;
-            font-size: 1.2em;
-        }
-    </style>
+    h1 {
+        font-size: 3em;
+        margin: 0;
+    }
+
+    .tasks {
+        margin-top: 40px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .tasks p {
+        margin: 5px 0;
+        font-size: 1.2em;
+    }
+</style>
 </head>
 <body>
+
+    <div class="crystals-count">0 crystals</div>
+
     <h1>Mcrystals</h1>
+
     <div class="tasks">
         <p>Задание 1: Подписаться на телеграмм канал</p>
-        <p>Задание 2:Пополните кристаллы </p>
+        <p>Задание 2: Пополните кристаллы</p>
         <p>Задание 3: Заберите бонус</p>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
