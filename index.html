@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -10,16 +10,15 @@
         padding: 0;
         font-family: Arial, sans-serif;
         display: flex;
-        justify-content: center; 
+        justify-content: center;
         align-items: center;
         height: 100vh;
-        flex-direction: column; /* ставим элементы вертикально */
+        flex-direction: column;
     }
 
-    /* блок с кристаллами */
     .crystals-count {
         font-size: 2em;
-        margin-bottom: 20px; /* расстояние перед Mcrystals */
+        margin-bottom: 20px;
     }
 
     h1 {
@@ -27,14 +26,19 @@
         margin: 0;
     }
 
-    .tasks {
+    /* Рамка для заданий */
+    .tasks-box {
         margin-top: 40px;
-        text-align: center;
-        width: 100%;
+        background: rgba(255, 255, 255, 0.1); /* лёгкая прозрачность */
+        padding: 20px;
+        border-radius: 15px;                 /* закругление */
+        width: 300px;                         /* ширина блока */
+        text-align: left;
+        border: 1px solid rgba(255, 255, 255, 0.2); /* тонкая подсветка */
     }
 
-    .tasks p {
-        margin: 5px 0;
+    .tasks-box p {
+        margin: 10px 0;
         font-size: 1.2em;
     }
 </style>
@@ -45,7 +49,7 @@
 
     <h1>Mcrystals</h1>
 
-    <div class="tasks">
+    <div class="tasks-box">
         <p>Задание 1: Подписаться на телеграмм канал</p>
         <p>Задание 2: Пополните кристаллы</p>
         <p>Задание 3: Заберите бонус</p>
@@ -54,5 +58,3 @@
     <script src="app.js"></script>
 </body>
 </html>
-
-
