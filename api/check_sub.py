@@ -1,38 +1,48 @@
-from flask import Flask, request, jsonify,send_from_directory
+import json
 import requests
+import os
 
-app = Flask(__name__)
-BOT_TOKEN = "8194199013:AAH9O-axpQHceYD3VGRsEukwoSYtGLPDqf8"  # замените на токен вашего бота
-CHANNEL_ID = "@skin_master_gdd"  # замените на username вашего канала
+BOT_TOKEN = "8194199013:AAH9O-axpQHceYD3VGRsEukwoSYtGLPDqf8"
+CHANNEL_ID = "@skin_master_gdd"
+DATA_FILE = "data.json"  # файл для хранения кристаллов
 
+def load_data():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as f:
+            return json.load(f)
+    return {}
 
-@app.route("/")
-def index():
-    return send_from_directory(".", "index.html")
+def save_data(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f)
 
-@app.route("/check_sub", methods=["POST"])
-def check_sub():
-    data = request.get_json()
-    user_id = data.get("user_id")
-    if not user_id:
-        return jsonify({"subscribed": False, "error": "Нет user_id"}), 400
-
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/getChatMember"
-    params = {"chat_id": CHANNEL_ID, "user_id": user_id}
-
+def handler(request, response):
     try:
+        data = json.loads(request.data)
+        user_id = str(data.get("user_id"))
+        if not user_id:
+            return response.status(400).json({"subscribed": False, "error": "Нет user_id"})
+
+        # Проверка подписки в Telegram
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/getChatMember"
+        params = {"chat_id": CHANNEL_ID, "user_id": user_id}
         r = requests.get(url, params=params)
-        r.raise_for_status()
         result = r.json()
+
         if result.get("ok") and result["result"]["status"] in ["member", "creator", "administrator"]:
-            return jsonify({"subscribed": True, "reward": 300})
+            # Загрузка текущих кристаллов
+            crystals_data = load_data()
+            current = crystals_data.get(user_id, 0)
+            crystals_data[user_id] = current + 300  # добавляем 300 кристаллов
+            save_data(crystals_data)
+
+            return response.status(200).json({
+                "subscribed": True,
+                "reward": 300,
+                "total_crystals": crystals_data[user_id]
+            })
         else:
-            return jsonify({"subscribed": False, "result": result})
-    except requests.exceptions.RequestException as e:
-        return jsonify({"subscribed": False, "error": str(e)}), 500
+            return response.status(200).json({"subscribed": False, "result": result})
+
     except Exception as e:
-        return jsonify({"subscribed": False, "error": str(e)}), 500
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
+        return response.status(500).json({"subscribed": False, "error": str(e)})
