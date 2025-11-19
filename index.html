@@ -23,8 +23,8 @@
     }
 
     .tasks-box {
-        border: 2px solid #fff;      /* рамка */
-        border-radius: 15px;          /* закругление */
+        border: 2px solid #fff;
+        border-radius: 15px;
         padding: 20px;
         margin: 10px auto;
         width: 300px;
@@ -43,17 +43,33 @@
         cursor: pointer;
     }
 
-    .task-line {
-        border: 0;
-        height: 1px;
-        background: #fff;
-        margin: 10px auto;
-        width: 80%;
+    /* Модальное окно */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.7);
+        justify-content: center;
+        align-items: center;
     }
 
-    #status {
-        margin-top: 20px;
-        font-size: 1.4em;
+    .modal-content {
+        background-color: #222;
+        color: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        width: 300px;
+    }
+
+    .modal-content button {
+        margin-top: 15px;
+        background-color: #f44336;
     }
 </style>
 </head>
@@ -61,31 +77,42 @@
 
 <h1>Mcrystals</h1>
 
-<div class="tasks-box">
+<div class="tasks-box" id="task1">
     <p>Задание 1: Подпишись на канал</p>
-    <button onclick="checkSub()">Проверить подписку</button>
+    <button id="subscribeBtn" onclick="subscribe()">Подписаться</button>
+    <button id="checkBtn" onclick="checkSub()" style="display:none;">Проверить подписку</button>
 </div>
-
-<hr class="task-line">
 
 <div class="tasks-box">
     <p>Задание 2: Пополните кристаллы</p>
     <button onclick="alert('Пополнено!')">Выполнить</button>
 </div>
 
-<hr class="task-line">
-
 <div class="tasks-box">
     <p>Задание 3: Заберите бонус</p>
     <button onclick="alert('Бонус получен!')">Выполнить</button>
 </div>
 
-<div id="status"></div>
+<!-- Модальное окно -->
+<div id="errorModal" class="modal">
+    <div class="modal-content">
+        <p id="errorText">❌ Ошибка при проверке подписки</p>
+        <button onclick="closeModal()">Закрыть</button>
+    </div>
+</div>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
     const tg = window.Telegram.WebApp;
-    const userId = tg.initDataUnsafe?.user?.id || 0; // ID пользователя из Telegram WebApp
+    const userId = tg.initDataUnsafe?.user?.id || 0;
+
+    function subscribe() {
+        const channelUrl = "https://t.me/your_channel";
+        window.open(channelUrl, "_blank");
+
+        document.getElementById("subscribeBtn").style.display = "none";
+        document.getElementById("checkBtn").style.display = "inline-block";
+    }
 
     function checkSub() {
         fetch("https://your-server.com/check_sub", {
@@ -95,24 +122,30 @@
         })
         .then(r => r.json())
         .then(data => {
-            const box = document.getElementById("status");
-
             if (data.subscribed === true) {
-                box.innerHTML = `✔ Вы подписались!<br>💎 +${data.reward} гемов`;
-                box.style.color = "#4caf50";
+                alert(`✔ Вы подписались! 💎 +${data.reward} гемов`);
             } else {
-                box.innerHTML = "❌ Вы не подписаны на канал";
-                box.style.color = "red";
+                showModal("❌ Вы не подписаны на канал");
             }
         })
         .catch(err => {
-            document.getElementById("status").innerHTML = "❌ Ошибка при проверке подписки";
+            showModal("❌ Ошибка при проверке подписки");
             console.error(err);
         });
+    }
+
+    function showModal(message) {
+        document.getElementById("errorText").innerText = message;
+        document.getElementById("errorModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("errorModal").style.display = "none";
     }
 </script>
 
 </body>
 </html>
+
 
 
