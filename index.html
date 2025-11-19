@@ -17,6 +17,12 @@
         justify-content: center;
     }
 
+    #crystalsCount {
+        font-size: 2em;
+        margin-bottom: 20px;
+        transition: transform 0.3s;
+    }
+
     h1 {
         font-size: 3em;
         margin-bottom: 40px;
@@ -41,6 +47,14 @@
         color: #fff;
         font-size: 1em;
         cursor: pointer;
+    }
+
+    #copyBtn {
+        background-color: #2196F3;
+    }
+
+    #checkBtn {
+        background-color: #FF9800;
     }
 
     /* Модальное окно */
@@ -79,6 +93,8 @@
 </head>
 <body>
 
+<!-- Счетчик кристаллов над заголовком -->
+<div id="crystalsCount">💎 0 кристаллов</div>
 <h1>Mcrystals</h1>
 
 <div class="tasks-box" id="task1">
@@ -90,18 +106,18 @@
 
 <div class="tasks-box">
     <p>Задание 2: Пополните кристаллы</p>
-    <button onclick="alert('Пополнено!')">Выполнить</button>
+    <button onclick="addCrystals(100)">Выполнить (+100)</button>
 </div>
 
 <div class="tasks-box">
     <p>Задание 3: Заберите бонус</p>
-    <button onclick="alert('Бонус получен!')">Выполнить</button>
+    <button onclick="addCrystals(50)">Выполнить (+50)</button>
 </div>
 
 <!-- Модальное окно -->
 <div id="errorModal" class="modal">
     <div class="modal-content">
-        <p id="errorText">❌ Ошибка при проверке подписки</p>
+        <p id="errorText">❌ Ошибка</p>
         <button onclick="closeModal()">Закрыть</button>
     </div>
 </div>
@@ -110,29 +126,21 @@
 <script>
     const tg = window.Telegram?.WebApp;
     const userId = tg?.initDataUnsafe?.user?.id || 0;
-    const channelUrl = "https://t.me/skin_master_gdd"; // Замените на ваш канал
+    const channelUrl = "https://t.me/your_channel"; // Замените на ваш канал
+    let crystals = 0; // текущий счет
 
     function subscribe() {
-        let opened = false;
-
-        if (tg?.initDataUnsafe) {
-            try {
-                tg.openLink(channelUrl);
-                opened = true;
-            } catch {
-                opened = false;
-            }
-        }
-
-        // Если не удалось открыть автоматически (Android WebApp), показать кнопку "Скопировать ссылку"
-        if (!opened) {
-            document.getElementById("copyBtn").style.display = "inline-block";
-            alert("Откройте Telegram и перейдите по ссылке:\n" + channelUrl);
-        }
-
-        // Скрываем кнопку "Подписаться", показываем "Проверить подписку"
+        // Скрываем кнопку подписки
         document.getElementById("subscribeBtn").style.display = "none";
         document.getElementById("checkBtn").style.display = "inline-block";
+
+        // Показываем инструкцию пользователю
+        showModal(
+            `Для подписки откройте Telegram и перейдите по ссылке:\n${channelUrl}`
+        );
+
+        // Показываем кнопку для копирования ссылки
+        document.getElementById("copyBtn").style.display = "inline-block";
     }
 
     function copyLink() {
@@ -150,7 +158,8 @@
         .then(r => r.json())
         .then(data => {
             if (data.subscribed === true) {
-                alert(`✔ Вы подписались! 💎 +${data.reward} гемов`);
+                addCrystals(data.reward); // Добавляем гемы
+                showModal(`✔ Вы подписались! 💎 +${data.reward} кристаллов`);
             } else {
                 showModal("❌ Вы не подписаны на канал");
             }
@@ -159,6 +168,17 @@
             showModal("❌ Ошибка при проверке подписки");
             console.error(err);
         });
+    }
+
+    function addCrystals(amount) {
+        crystals += amount;
+        const counter = document.getElementById("crystalsCount");
+        // Анимация увеличения
+        counter.style.transform = "scale(1.3)";
+        setTimeout(() => {
+            counter.style.transform = "scale(1)";
+        }, 300);
+        counter.innerText = `💎 ${crystals} кристаллов`;
     }
 
     function showModal(message) {
@@ -173,6 +193,8 @@
 
 </body>
 </html>
+
+
 
 
 
