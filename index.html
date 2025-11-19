@@ -4,16 +4,15 @@
 <meta charset="UTF-8">
 <title>Mcrystals</title>
 <style>
-    body { background-color:#000; color:#fff; font-family:Arial,sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; margin:0; }
-    #crystalsCount { font-size:2em; margin-bottom:20px; transition: transform 0.3s; }
-    h1 { font-size:3em; margin-bottom:40px; }
-    .tasks-box { border:2px solid #fff; border-radius:15px; padding:20px; margin:10px auto; width:300px; text-align:center; background-color:#111; }
-    .tasks-box button { margin-top:10px; padding:10px 20px; border-radius:10px; border:none; background:#4caf50; color:#fff; font-size:1em; cursor:pointer; }
-    .tasks-box a button { width:100%; }
-    #checkBtn { background-color:#FF9800; margin-top:10px; }
-    .modal { display:none; position:fixed; z-index:100; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7); justify-content:center; align-items:center; }
-    .modal-content { background-color:#222; color:#fff; padding:20px; border-radius:15px; text-align:center; width:300px; }
-    .modal-content button { margin-top:15px; background-color:#f44336; padding:8px 16px; cursor:pointer; border:none; border-radius:8px; }
+body { background:#000; color:#fff; font-family:Arial,sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; margin:0; }
+#crystalsCount { font-size:2em; margin-bottom:20px; }
+h1 { font-size:3em; margin-bottom:40px; }
+.tasks-box { border:2px solid #fff; border-radius:15px; padding:20px; margin:10px auto; width:300px; text-align:center; background-color:#111; }
+.tasks-box button { margin-top:10px; padding:10px 20px; border-radius:10px; border:none; background:#4caf50; color:#fff; font-size:1em; cursor:pointer; }
+.tasks-box a button { width:100%; }
+.modal { display:none; position:fixed; z-index:100; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7); justify-content:center; align-items:center; }
+.modal-content { background-color:#222; color:#fff; padding:20px; border-radius:15px; text-align:center; width:300px; }
+.modal-content button { margin-top:15px; background-color:#f44336; padding:8px 16px; cursor:pointer; border:none; border-radius:8px; }
 </style>
 </head>
 <body>
@@ -21,28 +20,23 @@
 <div id="crystalsCount">💎 0 кристаллов</div>
 <h1>Mcrystals</h1>
 
-<!-- Задание 1 -->
 <div class="tasks-box" id="task1">
     <p>Задание 1: Подпишись на канал</p>
-    <a href="https://t.me/skin_master_gdd" target="_blank">
-        <button onclick="markClicked()">Перейти в Telegram</button>
+    <a href="https://t.me/your_channel" target="_blank" onclick="startCheckSub()">
+        <button>Перейти в Telegram</button>
     </a>
-    <button id="checkBtn" onclick="checkSub()" disabled>Проверить подписку</button>
 </div>
 
-<!-- Задание 2 -->
 <div class="tasks-box">
     <p>Задание 2: Пополните кристаллы</p>
     <button onclick="addCrystals(100)">Выполнить (+100)</button>
 </div>
 
-<!-- Задание 3 -->
 <div class="tasks-box">
     <p>Задание 3: Заберите бонус</p>
     <button onclick="addCrystals(50)">Выполнить (+50)</button>
 </div>
 
-<!-- Модальное окно -->
 <div id="errorModal" class="modal">
     <div class="modal-content">
         <p id="errorText">❌ Ошибка</p>
@@ -52,9 +46,6 @@
 
 <script>
 let crystals = 0;
-let clicked = false;
-
-// Получение user_id из Telegram WebApp (если доступно)
 const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
 
 function addCrystals(amount) {
@@ -74,19 +65,9 @@ function closeModal() {
     document.getElementById("errorModal").style.display = "none";
 }
 
-function markClicked() {
-    clicked = true;
-    document.getElementById("checkBtn").disabled = false;
-}
-
 async function checkSub() {
-    if (!clicked) {
-        showModal("Сначала нажмите Перейти в Telegram");
-        return;
-    }
-
     try {
-        const response = await fetch("http://192.168.1.6:5000", { // адрес вашего Flask сервера
+        const response = await fetch("http://localhost:5000/check_sub", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user_id: userId })
@@ -105,11 +86,15 @@ async function checkSub() {
         showModal("❌ Ошибка при проверке подписки");
     }
 }
+
+// Автоматическая проверка через 5 секунд после перехода
+function startCheckSub() {
+    setTimeout(checkSub, 5000);
+}
 </script>
 
 </body>
 </html>
-
 
 
 
