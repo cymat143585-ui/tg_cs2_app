@@ -29,17 +29,24 @@
     /* Рамка для заданий */
     .tasks-box {
         margin-top: 40px;
-        background: rgba(255, 255, 255, 0.1); /* лёгкая прозрачность */
+        background: rgba(255, 255, 255, 0.1);
         padding: 20px;
-        border-radius: 15px;                 /* закругление */
-        width: 300px;                         /* ширина блока */
-        text-align: left;
-        border: 1px solid rgba(255, 255, 255, 0.2); /* тонкая подсветка */
+        border-radius: 15px;
+        width: 300px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .tasks-box p {
         margin: 10px 0;
         font-size: 1.2em;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.25); /* линия */
+    }
+
+    /* убрать линию у последнего задания */
+    .tasks-box p:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
     }
 </style>
 </head>
@@ -58,3 +65,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
