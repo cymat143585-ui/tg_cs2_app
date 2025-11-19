@@ -70,6 +70,10 @@
     .modal-content button {
         margin-top: 15px;
         background-color: #f44336;
+        padding: 8px 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
     }
 </style>
 </head>
@@ -107,9 +111,17 @@
     const userId = tg.initDataUnsafe?.user?.id || 0;
 
     function subscribe() {
-        const channelUrl = "https://t.me/your_channel";
-        window.open(channelUrl, "_blank");
+        const channelUrl = "https://t.me/your_channel"; // Замените на ваш канал
 
+        // Telegram Web App поддерживает openLink
+        if (tg?.openLink) {
+            tg.openLink(channelUrl);
+        } else {
+            // Если обычный браузер, откроем в новой вкладке
+            window.open(channelUrl, "_blank");
+        }
+
+        // Скрываем кнопку "Подписаться", показываем "Проверить подписку"
         document.getElementById("subscribeBtn").style.display = "none";
         document.getElementById("checkBtn").style.display = "inline-block";
     }
@@ -146,6 +158,8 @@
 
 </body>
 </html>
+
+
 
 
 
