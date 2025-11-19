@@ -107,21 +107,25 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    const tg = window.Telegram.WebApp;
-    const userId = tg.initDataUnsafe?.user?.id || 0;
+    const tg = window.Telegram?.WebApp;
+    const userId = tg?.initDataUnsafe?.user?.id || 0;
 
     function subscribe() {
         const channelUrl = "https://t.me/your_channel"; // Замените на ваш канал
 
-        // Telegram Web App поддерживает openLink
-        if (tg?.openLink) {
-            tg.openLink(channelUrl);
+        if (tg?.initDataUnsafe) {
+            // Telegram Web App
+            try {
+                tg.openLink(channelUrl);
+            } catch {
+                // fallback для Web App
+                window.location.href = channelUrl;
+            }
         } else {
-            // Если обычный браузер, откроем в новой вкладке
+            // Обычный браузер
             window.open(channelUrl, "_blank");
         }
 
-        // Скрываем кнопку "Подписаться", показываем "Проверить подписку"
         document.getElementById("subscribeBtn").style.display = "none";
         document.getElementById("checkBtn").style.display = "inline-block";
     }
@@ -158,6 +162,7 @@
 
 </body>
 </html>
+
 
 
 
