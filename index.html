@@ -48,41 +48,60 @@ h1 { font-size:3em; margin-bottom:40px; }
 let crystals = 0;
 const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
 
-// --- загрузка кристаллов при входе ---
+// ---------------------
+//  ЗАГРУЗКА КРИСТАЛЛОВ
+// ---------------------
 async function loadCrystals() {
-    const res = await fetch("get_crystals.php?user_id=" + userId);
-    const data = await res.json();
-    crystals = data.crystals || 0;
+    try {
+        const response = await fetch(`/api/get_crystals.py?user_id=${userId}`);
+        const data = await response.json();
 
-    document.getElementById("crystalsCount").innerText =
-        `💎 ${crystals} кристаллов`;
+        crystals = data.crystals || 0;
+
+        document.getElementById("crystalsCount").innerText =
+            `💎 ${crystals} кристаллов`;
+
+    } catch (e) {
+        console.error("Ошибка загрузки:", e);
+    }
 }
 
-// --- сохранение на сервер ---
+// ---------------------
+//  СОХРАНЕНИЕ КРИСТАЛЛОВ
+// ---------------------
 async function saveCrystals() {
-    await fetch("save_crystals.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            user_id: userId,
-            crystals: crystals
-        })
-    });
+    try {
+        await fetch("/api/save_crystals.py", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_id: userId,
+                crystals: crystals
+            })
+        });
+    } catch (e) {
+        console.error("Ошибка сохранения:", e);
+    }
 }
 
-async function addCrystals(amount) {
+// ---------------------
+//  ДОБАВЛЕНИЕ КРИСТАЛЛОВ
+// ---------------------
+function addCrystals(amount) {
     crystals += amount;
 
     const counter = document.getElementById("crystalsCount");
     counter.style.transform = "scale(1.3)";
-    setTimeout(() => counter.style.transform = "scale(1)", 300);
+    setTimeout(() => { counter.style.transform = "scale(1)"; }, 300);
 
     counter.innerText = `💎 ${crystals} кристаллов`;
 
-    // сохраняем на сервер
-    saveCrystals();
+    saveCrystals(); // ← Сохраняем на Python сервер
 }
 
+// ---------------------
+//  ПОКАЗАТЬ МОДАЛКУ
+// ---------------------
 function showModal(message) {
     document.getElementById("errorText").innerText = message;
     document.getElementById("errorModal").style.display = "flex";
@@ -92,10 +111,12 @@ function closeModal() {
     document.getElementById("errorModal").style.display = "none";
 }
 
-// пример (оставляю как было)
+// ---------------------
+//  ПРОВЕРКА ПОДПИСКИ (python API)
+// ---------------------
 async function checkSub() {
     try {
-        const response = await fetch("http://192.168.1.6:5000", {
+        const response = await fetch(`/api/check_sub.py`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user_id: userId })
@@ -109,22 +130,27 @@ async function checkSub() {
         } else {
             showModal("❌ Вы не подписаны на канал");
         }
+
     } catch (err) {
+        console.error(err);
         showModal("❌ Ошибка при проверке подписки");
     }
 }
 
+// Автоматическая проверка через 5 секунд
 function startCheckSub() {
     setTimeout(checkSub, 5000);
 }
 
-// загружаем кристаллы сразу
+// Загружаем кристаллы при запуске
 loadCrystals();
 </script>
 
 
+
 </body>
 </html>
+
 
 
 
