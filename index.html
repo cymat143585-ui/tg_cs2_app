@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Mcrystals</title>
+
 <style>
 body { background:#000; color:#fff; font-family:Arial,sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; margin:0; }
 #crystalsCount { font-size:2em; margin-bottom:20px; }
@@ -15,12 +16,13 @@ h1 { font-size:3em; margin-bottom:40px; }
 .modal-content button { margin-top:15px; background-color:#f44336; padding:8px 16px; cursor:pointer; border:none; border-radius:8px; }
 </style>
 </head>
+
 <body>
 
 <div id="crystalsCount">💎 0 кристаллов</div>
 <h1>Mcrystals</h1>
 
-<div class="tasks-box" id="task1">
+<div class="tasks-box">
     <p>Задание 1: Подпишись на канал</p>
     <a href="https://t.me/skin_master_gdd" target="_blank" onclick="startCheckSub()">
         <button>Перейти в Telegram</button>
@@ -49,43 +51,38 @@ let crystals = 0;
 const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 12345;
 
 // ---------------------
-//  ЗАГРУЗКА КРИСТАЛЛОВ
+//  Загрузка кристаллов
 // ---------------------
 async function loadCrystals() {
     try {
-        const response = await fetch(`/api/get_crystals.py?user_id=${userId}`);
-        const data = await response.json();
+        const res = await fetch(`/api/get_crystals.py?user_id=${userId}`);
+        const data = await res.json();
 
         crystals = data.crystals || 0;
 
         document.getElementById("crystalsCount").innerText =
             `💎 ${crystals} кристаллов`;
-
     } catch (e) {
-        console.error("Ошибка загрузки:", e);
+        console.error(e);
     }
 }
 
 // ---------------------
-//  СОХРАНЕНИЕ КРИСТАЛЛОВ
+//  Сохранение кристаллов
 // ---------------------
 async function saveCrystals() {
-    try {
-        await fetch("/api/save_crystals.py", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                user_id: userId,
-                crystals: crystals
-            })
-        });
-    } catch (e) {
-        console.error("Ошибка сохранения:", e);
-    }
+    await fetch("/api/save_crystals.py", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            user_id: userId,
+            crystals: crystals
+        })
+    });
 }
 
 // ---------------------
-//  ДОБАВЛЕНИЕ КРИСТАЛЛОВ
+//  Добавление кристаллов
 // ---------------------
 function addCrystals(amount) {
     crystals += amount;
@@ -96,11 +93,9 @@ function addCrystals(amount) {
 
     counter.innerText = `💎 ${crystals} кристаллов`;
 
-    saveCrystals(); // ← Сохраняем на Python сервер
+    saveCrystals();
 }
 
-// ---------------------
-//  ПОКАЗАТЬ МОДАЛКУ
 // ---------------------
 function showModal(message) {
     document.getElementById("errorText").innerText = message;
@@ -112,11 +107,9 @@ function closeModal() {
 }
 
 // ---------------------
-//  ПРОВЕРКА ПОДПИСКИ (python API)
-// ---------------------
 async function checkSub() {
     try {
-        const response = await fetch(`/api/check_sub.py`, {
+        const response = await fetch("/api/check_sub.py", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user_id: userId })
@@ -130,23 +123,17 @@ async function checkSub() {
         } else {
             showModal("❌ Вы не подписаны на канал");
         }
-
     } catch (err) {
-        console.error(err);
         showModal("❌ Ошибка при проверке подписки");
     }
 }
 
-// Автоматическая проверка через 5 секунд
 function startCheckSub() {
     setTimeout(checkSub, 5000);
 }
 
-// Загружаем кристаллы при запуске
 loadCrystals();
 </script>
-
-
 
 </body>
 </html>
